@@ -1,3 +1,4 @@
+#' @export
 flip_on <- function() {
 	if (is.null(PACKAGE_ENV$registered) || PACKAGE_ENV$registered == FALSE) {
 		rlang::abort("Can't enable flipping tables, call register_flips() with config first.")
@@ -16,6 +17,7 @@ flip_on <- function() {
 
 }
 
+#' @export
 flip_off <- function() {
 	if (is.null(PACKAGE_ENV$registered) || PACKAGE_ENV$registered == FALSE) {
 		rlang::abort("Can't disable flipping tables, call register_flips() with config first.")

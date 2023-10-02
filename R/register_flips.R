@@ -1,3 +1,4 @@
+#' @export
 register_flips <- function(printer_fns, printed_classes) {
 	if (!is.list(printed_classes)) {
 		rlang::abort(

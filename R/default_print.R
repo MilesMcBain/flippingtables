@@ -1,3 +1,13 @@
+#' Use the default print method for the table class
+#'
+#' This function will dispatch the default print method for the table, if any of
+#' the table's classes have been registered for flipping. Where the table has
+#' multiple classes registered, the priority is given to the order specified in
+#' the registration config.
+#'
+#' @param x the table to print
+#' @param ... args forwarded to the default print function
+#' @export
 default_print <- function(x, ...) {
 
   obj_class <-

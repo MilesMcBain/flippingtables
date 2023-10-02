@@ -1,3 +1,4 @@
+#' @export
 flip <- function(last_value = .Last.value) {
   PACKAGE_ENV$printer_index <-
     PACKAGE_ENV$printer_index + 1
