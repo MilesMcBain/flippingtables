@@ -38,17 +38,17 @@ register_flips <- function(printer_fns, printed_classes) {
 
 
 	PACKAGE_ENV$printer_fns <- printer_fns
-  PACKAGE_ENV$printed_classes <- printed_classes
+	PACKAGE_ENV$printed_classes <- printed_classes
 	PACKAGE_ENV$printer_index <- 1
 	PACKAGE_ENV$default_prints <- list()
 
 
-  PACKAGE_ENV$registered <- TRUE
+	PACKAGE_ENV$registered <- TRUE
 
-  TRUE
+	TRUE
 }
 
-
+#' @export
 print_override <- function(class, pkg_namespace) {
 	if (!(rlang::is_string(class) && rlang::is_string(pkg_namespace))) {
 		rlang::abort("'class' and 'pkg_namespace' must both be length 1 character vectors")
@@ -61,21 +61,19 @@ print_override <- function(class, pkg_namespace) {
 
 
 function() {
-	printed_classes <- list(
-		print_override(class = "tbl", pkg_namespace = "pillar"),
-		print_override(class = "data.frame", pkg_namespace = "base"),
-		print_override(class = "data.table", pkg_namespace = "data.table")
+	printed_classes <- register_flips(
+		printer_fns = list(paint::paint, knitr::kable, default_print),
+		printed_classes = list(
+			print_override(class = "tbl", pkg_namespace = "pillar"),
+			print_override(class = "data.frame", pkg_namespace = "base"),
+			print_override(class = "data.table", pkg_namespace = "data.table")
+		)
 	)
-  register_flips(
-    printer_fns,
-    printed_classes
-  )
-  flip_on()
-
-  flip()
-  tibble::as_tibble(mtcars)
-  dispatch_current_print(mtcars)
-  print(mtcars)
-
+	flip_on()
+	penguins
+	flip()
+	flip()
+	# it's sticky!
+	penguins
+	flip()
 }
-

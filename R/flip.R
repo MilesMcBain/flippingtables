@@ -7,11 +7,14 @@ flip <- function(last_value = .Last.value) {
   }
   intersecting_classes <-
     intersect(
-      vapply(printed_classes, function(x) x$class, character(1)),
+      vapply(PACKAGE_ENV$printed_classes, function(x) x$class, character(1)),
       class(last_value)
     )
   if (length(intersecting_classes) > 1) {
-    print(last_value)
+    last_value
+  } else {
+    invisible(last_value)
   }
+
 }
 
