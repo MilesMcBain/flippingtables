@@ -1,10 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-> All data.frame print methods are wrong, but some are useful - George
-> Whatsit
-
 # (╯°□°）╯︵ ┻━┻ {flippingtables} (╯°□°）╯︵ ┻━┻
+
+> All data.frame print methods are wrong, but some are useful
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -14,7 +13,7 @@ Inside you are two R users:
 -   One seeks meaning and truth in the numbers
 -   One seeks correctness and reproducibility in the code
 
-The problem with all print() methods is that none can satisfy both
+The problem with all `print()` methods is that none can satisfy both
 users.
 
 Metods like `paint::paint()`, `pillar::glimpse()`, and `str()` are
@@ -69,18 +68,19 @@ Here’s an example config:
 ``` r
 library(flippingtables)
 register_flips(
-        printer_fns = list(
-      paint::paint, # a pretty good option if I do say so myself.
-      function(x) default_print(x, n = 100), # a long format
-      function(x) withr::with_options(list(width = 300), default_print(x, n = 100))), # a wide format
-        printed_classes = list(
-            print_override(class = "tbl", pkg_namespace = "pillar"),
-            print_override(class = "data.frame", pkg_namespace = "base"),
-            print_override(class = "data.table", pkg_namespace = "data.table")
-        )
-    )
+  printer_fns = list(
+    paint::paint, # a pretty good option if I do say so myself.
+    function(x) default_print(x, n = 100), # a long format
+    function(x) withr::with_options(list(width = 300), default_print(x, n = 100))
+  ), # a wide format
+  printed_classes = list(
+    print_override(class = "tbl", pkg_namespace = "pillar"),
+    print_override(class = "data.frame", pkg_namespace = "base"),
+    print_override(class = "data.table", pkg_namespace = "data.table")
+  )
+)
 #> [1] TRUE
-  flip_on() # now it's live!
+flip_on() # now it's live!
 ```
 
 First in `printer_fns` we declare the print methods we want be able to
@@ -245,19 +245,22 @@ We work around this like so:
 ``` r
 library(flippingtables)
 register_flips(
-        printer_fns = list(
-      paint::paint, # a pretty good option if I do say so myself.
-      function(x) {print(knitr::kable(x)); invisible(x)}
-    ),
-        printed_classes = list(
-            print_override(class = "tbl", pkg_namespace = "pillar"),
-            print_override(class = "data.frame", pkg_namespace = "base"),
-            print_override(class = "data.table", pkg_namespace = "data.table")
-        )
-    )
-  flip_on() # now it's live!
-  flip()
-  penguins
+  printer_fns = list(
+    paint::paint, # a pretty good option if I do say so myself.
+    function(x) {
+      print(knitr::kable(x))
+      invisible(x)
+    }
+  ),
+  printed_classes = list(
+    print_override(class = "tbl", pkg_namespace = "pillar"),
+    print_override(class = "data.frame", pkg_namespace = "base"),
+    print_override(class = "data.table", pkg_namespace = "data.table")
+  )
+)
+flip_on() # now it's live!
+flip()
+penguins
 
 # |species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
 # |:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|

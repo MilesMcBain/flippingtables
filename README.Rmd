@@ -4,8 +4,6 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-> All data.frame print methods are wrong, but some are useful
-> - George Whatsit
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -18,6 +16,8 @@ knitr::opts_chunk$set(
 
 # (╯°□°）╯︵ ┻━┻ {flippingtables} (╯°□°）╯︵ ┻━┻
 
+> All data.frame print methods are wrong, but some are useful
+
 <!-- badges: start -->
 <!-- badges: end -->
 
@@ -26,7 +26,7 @@ Inside you are two R users:
   - One seeks meaning and truth in the numbers
   - One seeks correctness and reproducibility in the code
 
-The problem with all print() methods is that none can satisfy both users.
+The problem with all `print()` methods is that none can satisfy both users.
 
 Metods like `paint::paint()`, `pillar::glimpse()`, and `str()` are pitched at
 the developer. They aim to succinctly display types, and convey a feel for the data with examples.
@@ -72,17 +72,18 @@ Here's an example config:
 ```{r configuration}
 library(flippingtables)
 register_flips(
-		printer_fns = list(
-      paint::paint, # a pretty good option if I do say so myself.
-      function(x) default_print(x, n = 100), # a long format
-      function(x) withr::with_options(list(width = 300), default_print(x, n = 100))), # a wide format
-		printed_classes = list(
-			print_override(class = "tbl", pkg_namespace = "pillar"),
-			print_override(class = "data.frame", pkg_namespace = "base"),
-			print_override(class = "data.table", pkg_namespace = "data.table")
-		)
-	)
-  flip_on() # now it's live!
+  printer_fns = list(
+    paint::paint, # a pretty good option if I do say so myself.
+    function(x) default_print(x, n = 100), # a long format
+    function(x) withr::with_options(list(width = 300), default_print(x, n = 100))
+  ), # a wide format
+  printed_classes = list(
+    print_override(class = "tbl", pkg_namespace = "pillar"),
+    print_override(class = "data.frame", pkg_namespace = "base"),
+    print_override(class = "data.table", pkg_namespace = "data.table")
+  )
+)
+flip_on() # now it's live!
 ```
 
 First in `printer_fns` we declare the print methods we want be able to toggle
@@ -196,7 +197,6 @@ flip()
 # 100 Adelie  Dream               43.2          18.5               192        4100 male    2008
 # # ℹ 244 more rows
 # # ℹ Use `print(n = ...)` to see more rows
-
 ```
 
 ### Keyboard shortcut
@@ -242,19 +242,22 @@ We work around this like so:
 ```{r, eval=FALSE}
 library(flippingtables)
 register_flips(
-		printer_fns = list(
-      paint::paint, # a pretty good option if I do say so myself.
-      function(x) {print(knitr::kable(x)); invisible(x)}
-    ),
-		printed_classes = list(
-			print_override(class = "tbl", pkg_namespace = "pillar"),
-			print_override(class = "data.frame", pkg_namespace = "base"),
-			print_override(class = "data.table", pkg_namespace = "data.table")
-		)
-	)
-  flip_on() # now it's live!
-  flip()
-  penguins
+  printer_fns = list(
+    paint::paint, # a pretty good option if I do say so myself.
+    function(x) {
+      print(knitr::kable(x))
+      invisible(x)
+    }
+  ),
+  printed_classes = list(
+    print_override(class = "tbl", pkg_namespace = "pillar"),
+    print_override(class = "data.frame", pkg_namespace = "base"),
+    print_override(class = "data.table", pkg_namespace = "data.table")
+  )
+)
+flip_on() # now it's live!
+flip()
+penguins
 
 # |species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
 # |:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
@@ -262,5 +265,4 @@ register_flips(
 # |Adelie    |Torgersen |           39.5|          17.4|               186|        3800|female | 2007|
 # |Adelie    |Torgersen |           40.3|          18.0|               195|        3250|female | 2007|
 # .. Output continues ..
-
 ```
