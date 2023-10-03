@@ -4,7 +4,7 @@
 > All data.frame print methods are wrong, but some are useful - George
 > Whatsit
 
-# flippingtables
+# (╯°□°）╯︵ ┻━┻ {flippingtables} (╯°□°）╯︵ ┻━┻
 
 <!-- badges: start -->
 <!-- badges: end -->
