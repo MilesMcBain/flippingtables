@@ -104,12 +104,11 @@ their corresponding `print()` methods dispatched instead of
 Calling `flippingtables::flip()` will advance the binding for the
 current print method to be used for all configured classes to the next
 one in the list. Print methods are cycled through in the order they are
-configured, and of course the cycle wraps-around so cycling can happen
+configured, and of course the cycle wraps around so cycling can happen
 endlessly.
 
 If the last result (`.Last.value`) has a class that is configured for
-flipping, then the object is automatically reprinted with the new print
-method selected the object is automatically reprinted with the new print
+flipping, then the object is automatically re-printed with the new print
 method selected by `flip()`.
 
 Here’s how it might look:
