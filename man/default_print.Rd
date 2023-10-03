@@ -17,3 +17,7 @@ the table's classes have been registered for flipping. Where the table has
 multiple classes registered, the priority is given to the order specified in
 the registration config.
 }
+\details{
+Use this in \code{printer_fns} configuration in \code{\link[=register_flips]{register_flips()}}. Do not use
+\code{print()} as that creates an unavoidable S3 dispatch loop.
+}

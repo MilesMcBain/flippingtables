@@ -5,6 +5,9 @@
 #' multiple classes registered, the priority is given to the order specified in
 #' the registration config.
 #'
+#' Use this in `printer_fns` configuration in [register_flips()]. Do not use
+#' `print()` as that creates an unavoidable S3 dispatch loop.
+#'
 #' @param x the table to print
 #' @param ... args forwarded to the default print function
 #' @export

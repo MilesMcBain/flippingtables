@@ -1,0 +1,5 @@
+Name: flip()
+Description: Flip between your configured print methods
+Binding: flip
+Interactive: false
+

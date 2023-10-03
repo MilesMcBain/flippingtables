@@ -1,3 +1,9 @@
+#' Enable cycling between print methods with flip()
+#'
+#' When a configuration has been created with [register_flips()] this function
+#' uses that config to reroute the print methods of the configured classes,
+#' enabling printing with user-defined methods and cycling between them.
+#'
 #' @export
 flip_on <- function() {
 	if (is.null(PACKAGE_ENV$registered) || PACKAGE_ENV$registered == FALSE) {
@@ -17,6 +23,12 @@ flip_on <- function() {
 
 }
 
+#' Disable cycling between print methods with flip()
+#'
+#' This undoes the print method rerouting done by [flip_on()]. Print methods are
+#' returned to defaults for all configured classes. The configuration created by
+#' [register_flips()] remains and can be enabled again using [flip_on()].
+#'
 #' @export
 flip_off <- function() {
 	if (is.null(PACKAGE_ENV$registered) || PACKAGE_ENV$registered == FALSE) {
@@ -37,7 +49,7 @@ flip_off <- function() {
 
 replace_print <- function(print_override_info) {
   PACKAGE_ENV$default_prints[[print_override_info$class]] <-
-    getFromNamespace(paste0("print.", print_override_info$class), print_override_info$pkg_namespace)
+    utils::getFromNamespace(paste0("print.", print_override_info$class), print_override_info$pkg_namespace)
   .S3method("print", print_override_info$class, dispatch_current_print)
 }
 

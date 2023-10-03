@@ -1,3 +1,14 @@
+#' Cycle through configured print methods
+#'
+#' `print()`` methods are kept in the order supplied in [register_flips()], calling
+#' this function cycles between them changing the active print method.
+#'
+#' if the `.Last.value` hs a class in `printed_classes` supplied to
+#' `[register_flips()]`, it is reprinted using the current print method when this
+#' function is called.
+#'
+#' @param last_value The value to be printed with the
+#'   next active print method cycled to by `flip()` defaults to `.Last.value`. Mainly used for testing.
 #' @export
 flip <- function(last_value = .Last.value) {
   PACKAGE_ENV$printer_index <-

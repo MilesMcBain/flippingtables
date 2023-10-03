@@ -1,36 +1,78 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+> All data.frame print methods are wrong, but some are useful - George
+> Whatsit
+
 # flippingtables
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of flippingtables is to …
+Inside you are two R users:
+
+-   One seeks meaning and truth in the numbers
+-   One seeks correctness and reproducibility in the code
+
+The problem with all print() methods is that none can satisfy both
+users.
+
+Metods like `paint::paint()`, `pillar::glimpse()`, and `str()` are
+pitched at the developer. They aim to succinctly display types, and
+convey a feel for the data with examples.
+
+The default `print.data.frame()` aims to give the analyst all the
+numbers, and even does an okay job of it, provided you have a ultra-wide
+screen monitor, and less than a couple of hundred rows.
+
+Others try to compromise between the two modalities, and they are
+generally the worst to use. They’ll consider the volume of data and
+space available, and concoct methods of truncation. Not rows, nor
+columns, nor column names, nor decimal places are held sacred. Using
+these involves a lot of retracing your steps fiddling with print
+arguments or setting options. It’s enough to make you want to flip
+tables.
+
+You need multiple ways of printing data to suit whatever kind of user
+you happen to be today, and you need them arrayed easily at your
+fingertips to keep you in the zone. This package places the way you view
+your data in your session fully within your control.
 
 ## Installation
 
-You can install the development version of flippingtables from
-[GitHub](https://github.com/) with:
-
 ``` r
-# install.packages("devtools")
-devtools::install_github("MilesMcBain/flippingtables")
+remotes::install_github("MilesMcBain/flippingtables")
 ```
 
-## Example
+## How to flip() tables
 
-This is a basic example which shows you how to solve a common problem:
+The setup is:
+
+1.  Create a configuration (probably in .Rprofile) with
+    `register_flips()`
+
+2.  Enable the config with `flip_on()` (possibly in .Rprofile)
+
+-   may seem redundant but thank me when you need to `flip_off()` custom
+    print methods because they balk at exotic text encodings or some
+    such.
+
+3.  Use `flip()` to cycle between configured print methods for
+    configured classes.
+
+-   Probably via a keyboard shortcut
+
+## Configuration
+
+Here’s an example config:
 
 ``` r
 library(flippingtables)
-library(palmerpenguins)
-
 register_flips(
         printer_fns = list(
-      paint::paint,
-      pillar::glimpse,
-      default_print),
+      paint::paint, # a pretty good option if I do say so myself.
+      function(x) default_print(x, n = 100), # a long format
+      function(x) withr::with_options(list(width = 300), default_print(x, n = 100))), # a wide format
         printed_classes = list(
             print_override(class = "tbl", pkg_namespace = "pillar"),
             print_override(class = "data.frame", pkg_namespace = "base"),
@@ -38,58 +80,189 @@ register_flips(
         )
     )
 #> [1] TRUE
-    flip_on()
-    penguins
-#> tibble [344, 8]
-#> species           fct Adelie Adelie Adelie Adelie Adelie Ad~
-#> island            fct Torgersen Torgersen Torgersen Torgers~
-#> bill_length_mm    dbl 39.1 39.5 40.3 NA 36.7 39.3
-#> bill_depth_mm     dbl 18.7 17.4 18 NA 19.3 20.6
-#> flipper_length_mm int 181 186 195 NA 193 190
-#> body_mass_g       int 3750 3800 3250 NA 3450 3650
-#> sex               fct male female female NA female male
-#> year              int 2007 2007 2007 2007 2007 2007
+  flip_on() # now it's live!
+```
 
-    flip()
-#> Rows: 344
-#> Columns: 8
-#> $ species           <fct> Adelie, Adelie, Adelie, Adelie, Adelie, Adelie, Adel…
-#> $ island            <fct> Torgersen, Torgersen, Torgersen, Torgersen, Torgerse…
-#> $ bill_length_mm    <dbl> 39.1, 39.5, 40.3, NA, 36.7, 39.3, 38.9, 39.2, 34.1, …
-#> $ bill_depth_mm     <dbl> 18.7, 17.4, 18.0, NA, 19.3, 20.6, 17.8, 19.6, 18.1, …
-#> $ flipper_length_mm <int> 181, 186, 195, NA, 193, 190, 181, 195, 193, 190, 186…
-#> $ body_mass_g       <int> 3750, 3800, 3250, NA, 3450, 3650, 3625, 4675, 3475, …
-#> $ sex               <fct> male, female, female, NA, female, male, female, male…
-#> $ year
+First in `printer_fns` we declare the print methods we want be able to
+toggle between for use as the automatic `print()` in our R consolse
+sessions. Using anonymous functions is a great way to prototype custom
+print methods. The special function `print_default()` stands in for
+whatever the default print for the class being printed would normally
+be.
 
-    # it's sticky!
-    penguins
-#> Rows: 344
-#> Columns: 8
-#> $ species           <fct> Adelie, Adelie, Adelie, Adelie, Adelie, Adelie, Adel…
-#> $ island            <fct> Torgersen, Torgersen, Torgersen, Torgersen, Torgerse…
-#> $ bill_length_mm    <dbl> 39.1, 39.5, 40.3, NA, 36.7, 39.3, 38.9, 39.2, 34.1, …
-#> $ bill_depth_mm     <dbl> 18.7, 17.4, 18.0, NA, 19.3, 20.6, 17.8, 19.6, 18.1, …
-#> $ flipper_length_mm <int> 181, 186, 195, NA, 193, 190, 181, 195, 193, 190, 186…
-#> $ body_mass_g       <int> 3750, 3800, 3250, NA, 3450, 3650, 3625, 4675, 3475, …
-#> $ sex               <fct> male, female, female, NA, female, male, female, male…
-#> $ year              <int> 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007…
+Then we nominate `tbl`, `data.frame`, and `data.table` as ‘flippable’
+classes. We have to nominate the ‘top-level’ class that has the print
+method we want to override. I.e. even though `tbl` (a generic `tibble`
+used by `{pillar}`) and `data.table` are also `data.frame` we can’t just
+configure `data.frame` because objects of those classes have the `"tbl"`
+or `"data.table"` appear earlier in their vector of classes. This means
+their corresponding `print()` methods dispatched instead of
+`print.data.frame` (or the custom print method we routed that too).
 
-    flip()
-## A tibble: 344 × 8
-#    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-#    <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
-#  1 Adelie  Torgersen           39.1          18.7               181        3750
-#  2 Adelie  Torgersen           39.5          17.4               186        3800
-#  3 Adelie  Torgersen           40.3          18                 195        3250
-#  4 Adelie  Torgersen           NA            NA                  NA          NA
-#  5 Adelie  Torgersen           36.7          19.3               193        3450
-#  6 Adelie  Torgersen           39.3          20.6               190        3650
-#  7 Adelie  Torgersen           38.9          17.8               181        3625
-#  8 Adelie  Torgersen           39.2          19.6               195        4675
-#  9 Adelie  Torgersen           34.1          18.1               193        3475
-# 10 Adelie  Torgersen           42            20.2               190        4250
-## ℹ 334 more rows
-## ℹ 2 more variables: sex <fct>, year <int>
-## ℹ Use `print(n = ...)` to see more rows
+### Flipping
+
+Calling `flippingtables::flip()` will advance the binding for the
+current print method to be used for all configured classes to the next
+one in the list. Print methods are cycled through in the order they are
+configured, and of course the cycle wraps-around so cycling can happen
+endlessly.
+
+If the last result (`.Last.value`) has a class that is configured for
+flipping, then the object is automatically reprinted with the new print
+method selected the object is automatically reprinted with the new print
+method selected by `flip()`.
+
+Here’s how it might look:
+
+``` r
+# assuming config above
+library(palmerpenguins)
+penguins
+
+# tibble [344, 8]
+# species           fct Adelie Adelie Adelie Adelie Adelie Ad~
+# island            fct Torgersen Torgersen Torgersen Torgers~
+# bill_length_mm    dbl 39.1 39.5 40.3 NA 36.7 39.3
+# bill_depth_mm     dbl 18.7 17.4 18 NA 19.3 20.6
+# flipper_length_mm int 181 186 195 NA 193 190
+# body_mass_g       int 3750 3800 3250 NA 3450 3650
+# sex               fct male female female NA female male
+# year              int 2007 2007 2007 2007 2007 2007
+
+flip()
+
+#  A tibble: 344 × 8
+#     species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+#     <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
+#   1 Adelie  Torgersen           39.1          18.7               181        3750
+#   2 Adelie  Torgersen           39.5          17.4               186        3800
+#   3 Adelie  Torgersen           40.3          18                 195        3250
+#   4 Adelie  Torgersen           NA            NA                  NA          NA
+#   5 Adelie  Torgersen           36.7          19.3               193        3450
+
+#   .. Output continues ..
+
+#  95 Adelie  Dream               36.2          17.3               187        3300
+#  96 Adelie  Dream               40.8          18.9               208        4300
+#  97 Adelie  Dream               38.1          18.6               190        3700
+#  98 Adelie  Dream               40.3          18.5               196        4350
+#  99 Adelie  Dream               33.1          16.1               178        2900
+# 100 Adelie  Dream               43.2          18.5               192        4100
+# # ℹ 244 more rows
+# # ℹ 2 more variables: sex <fct>, year <int>
+# # ℹ Use `print(n = ...)` to see more rows
+
+# it's sticky!
+penguins
+
+#  A tibble: 344 × 8
+#     species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+#     <fct>   <fct>              <dbl>         <dbl>             <int>       <int>
+#   1 Adelie  Torgersen           39.1          18.7               181        3750
+#   2 Adelie  Torgersen           39.5          17.4               186        3800
+#   3 Adelie  Torgersen           40.3          18                 195        3250
+#   4 Adelie  Torgersen           NA            NA                  NA          NA
+#   5 Adelie  Torgersen           36.7          19.3               193        3450
+
+#   .. Output continues ..
+
+#  95 Adelie  Dream               36.2          17.3               187        3300
+#  96 Adelie  Dream               40.8          18.9               208        4300
+#  97 Adelie  Dream               38.1          18.6               190        3700
+#  98 Adelie  Dream               40.3          18.5               196        4350
+#  99 Adelie  Dream               33.1          16.1               178        2900
+# 100 Adelie  Dream               43.2          18.5               192        4100
+# # ℹ 244 more rows
+# # ℹ 2 more variables: sex <fct>, year <int>
+# # ℹ Use `print(n = ...)` to see more rows
+
+flip()
+
+# # A tibble: 344 × 8
+#     species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g sex     year
+#     <fct>   <fct>              <dbl>         <dbl>             <int>       <int> <fct>  <int>
+#   1 Adelie  Torgersen           39.1          18.7               181        3750 male    2007
+#   2 Adelie  Torgersen           39.5          17.4               186        3800 female  2007
+#   3 Adelie  Torgersen           40.3          18                 195        3250 female  2007
+#   4 Adelie  Torgersen           NA            NA                  NA          NA NA      2007
+#   5 Adelie  Torgersen           36.7          19.3               193        3450 female  2007
+#
+# .. Output continues ..
+#
+#  95 Adelie  Dream               36.2          17.3               187        3300 female  2008
+#  96 Adelie  Dream               40.8          18.9               208        4300 male    2008
+#  97 Adelie  Dream               38.1          18.6               190        3700 female  2008
+#  98 Adelie  Dream               40.3          18.5               196        4350 male    2008
+#  99 Adelie  Dream               33.1          16.1               178        2900 female  2008
+# 100 Adelie  Dream               43.2          18.5               192        4100 male    2008
+# # ℹ 244 more rows
+# # ℹ Use `print(n = ...)` to see more rows
+```
+
+### Keyboard shortcut
+
+In VSCode:
+
+``` json
+{
+      "description": "flip() between print methods",
+      "key": "<CHOOSE A KEYBINDING>",
+      "command": "r.runCommand",
+      "when": "editorTextFocus",
+      "args": "flippingtables::flip()"
+}
+```
+
+In RStudio:
+
+-   `flip()` is exposed as an RStudio addin, which can be bound to a
+    keyboard shortcut. See
+    [instructions](https://docs.posit.co/ide/user/ide/guide/productivity/custom-shortcuts.html)
+
+In other editor:
+
+-   I think you should mostly be fine since it doesn’t depend on any
+    editor state, but let me know if I can expose anything that makes it
+    easier.
+
+### Cookbook
+
+On of my personal favourites for looking at sumarised data analytically
+(provided it is sorted sensibly) is `knitr::kable()`. It has the added
+benefit that you can easily copy-paste the output to make nice tables in
+applications that speak markdown. It presents two problems for use
+directly:
+
+-   it doesn’t eturn the data it printed invisibly, unlike most methods
+    intended to be used for this purpose. This will cause flipping with
+    flip() to stop as soon as this method is hit.
+-   it returns an object of a different class which has its own print
+    method. R console seems not to like the idea of running through the
+    print dispatch again, so we get nothing.
+
+We work around this like so:
+
+``` r
+library(flippingtables)
+register_flips(
+        printer_fns = list(
+      paint::paint, # a pretty good option if I do say so myself.
+      function(x) {print(knitr::kable(x)); invisible(x)}
+    ),
+        printed_classes = list(
+            print_override(class = "tbl", pkg_namespace = "pillar"),
+            print_override(class = "data.frame", pkg_namespace = "base"),
+            print_override(class = "data.table", pkg_namespace = "data.table")
+        )
+    )
+  flip_on() # now it's live!
+  flip()
+  penguins
+
+# |species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
+# |:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
+# |Adelie    |Torgersen |           39.1|          18.7|               181|        3750|male   | 2007|
+# |Adelie    |Torgersen |           39.5|          17.4|               186|        3800|female | 2007|
+# |Adelie    |Torgersen |           40.3|          18.0|               195|        3250|female | 2007|
+# .. Output continues ..
 ```
