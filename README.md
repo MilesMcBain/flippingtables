@@ -16,7 +16,7 @@ Inside you are two R users:
 The problem with all `print()` methods is that none can satisfy both
 users.
 
-Metods like `paint::paint()`, `pillar::glimpse()`, and `str()` are
+Methods like `paint::paint()`, `pillar::glimpse()`, and `str()` are
 pitched at the developer. They aim to succinctly display types, and
 convey a feel for the data with examples.
 
