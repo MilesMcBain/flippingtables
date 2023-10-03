@@ -233,9 +233,9 @@ benefit that you can easily copy-paste the output to make nice tables in
 applications that speak markdown. It presents two problems for use
 directly:
 
--   it doesn’t eturn the data it printed invisibly, unlike most methods
-    intended to be used for this purpose. This will cause flipping with
-    flip() to stop as soon as this method is hit.
+-   it doesn’t return the data it printed invisibly, unlike most methods
+    intended to be used for this purpose. This will cause printing the
+    `.Last.value` with flip() to stop as soon as this method is hit.
 -   it returns an object of a different class which has its own print
     method. R console seems not to like the idea of running through the
     print dispatch again, so we get nothing.
