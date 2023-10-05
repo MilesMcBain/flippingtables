@@ -1,7 +1,6 @@
 Package: flippingtables
 Title: Override and cycle between table print methods
-Version: 0.0.1
-Authors@R:
+Version: 0.0.2
     person("Miles", "McBain", , "miles.mcbain@gmail.com", role = c("aut", "cre"))
 Description: User can configure a list of alternative print methods and table classes to which they apply. Facilitates cycling between print methods with a keyboard shortcut.
 License: MIT + file LICENSE
@@ -10,5 +9,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports:
     glue,
+    magrittr,
     rlang,
+    stats,
     utils
+Suggests:
+    palmerpenguins,
+    pillar,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

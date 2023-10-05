@@ -74,9 +74,9 @@ library(flippingtables)
 register_flips(
   printer_fns = list(
     paint::paint, # a pretty good option if I do say so myself.
-    function(x) default_print(x, n = 100), # a long format
-    function(x) withr::with_options(list(width = 300), default_print(x, n = 100))
-  ), # a wide format
+    function(x) default_print(x, .args = list(print_arg(c("n", "max"), 100))), # a long format, uses .args see help(default_print)
+    function(x) withr::with_options(list(width = 300), default_print(x)) # a wide format
+  ),
   printed_classes = list(
     print_override(class = "tbl", pkg_namespace = "pillar"),
     print_override(class = "data.frame", pkg_namespace = "base"),
@@ -178,23 +178,19 @@ penguins
 flip()
 
 # # A tibble: 344 × 8
-#     species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g sex     year
-#     <fct>   <fct>              <dbl>         <dbl>             <int>       <int> <fct>  <int>
-#   1 Adelie  Torgersen           39.1          18.7               181        3750 male    2007
-#   2 Adelie  Torgersen           39.5          17.4               186        3800 female  2007
-#   3 Adelie  Torgersen           40.3          18                 195        3250 female  2007
-#   4 Adelie  Torgersen           NA            NA                  NA          NA NA      2007
-#   5 Adelie  Torgersen           36.7          19.3               193        3450 female  2007
-#
-# .. Output continues ..
-#
-#  95 Adelie  Dream               36.2          17.3               187        3300 female  2008
-#  96 Adelie  Dream               40.8          18.9               208        4300 male    2008
-#  97 Adelie  Dream               38.1          18.6               190        3700 female  2008
-#  98 Adelie  Dream               40.3          18.5               196        4350 male    2008
-#  99 Adelie  Dream               33.1          16.1               178        2900 female  2008
-# 100 Adelie  Dream               43.2          18.5               192        4100 male    2008
-# # ℹ 244 more rows
+#    species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g sex     year
+#    <fct>   <fct>              <dbl>         <dbl>             <int>       <int> <fct>  <int>
+#  1 Adelie  Torgersen           39.1          18.7               181        3750 male    2007
+#  2 Adelie  Torgersen           39.5          17.4               186        3800 female  2007
+#  3 Adelie  Torgersen           40.3          18                 195        3250 female  2007
+#  4 Adelie  Torgersen           NA            NA                  NA          NA NA      2007
+#  5 Adelie  Torgersen           36.7          19.3               193        3450 female  2007
+#  6 Adelie  Torgersen           39.3          20.6               190        3650 male    2007
+#  7 Adelie  Torgersen           38.9          17.8               181        3625 female  2007
+#  8 Adelie  Torgersen           39.2          19.6               195        4675 male    2007
+#  9 Adelie  Torgersen           34.1          18.1               193        3475 NA      2007
+# 10 Adelie  Torgersen           42            20.2               190        4250 NA      2007
+# # ℹ 334 more rows
 # # ℹ Use `print(n = ...)` to see more rows
 ```
 

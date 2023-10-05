@@ -2,14 +2,25 @@
 % Please edit documentation in R/default_print.R
 \name{default_print}
 \alias{default_print}
+\alias{print_arg}
 \title{Use the default print method for the table class}
 \usage{
-default_print(x, ...)
+default_print(x, ..., .args = NULL)
+
+print_arg(arg_aliases, arg_value)
 }
 \arguments{
 \item{x}{the table to print}
 
 \item{...}{args forwarded to the default print function}
+
+\item{.args}{configured args forwarded to the default print function using
+special argument matching rules, avoiding partial argument matching.
+See Details.}
+
+\item{arg_aliases}{A vector of aliases to use for this argument. The first alias matching a formal argument of the default print function will be used for the name of \code{arg_value}.}
+
+\item{arg_value}{The value to be bound to one of the \code{arg_aliases} that matches a formal argument of the default print function.}
 }
 \description{
 This function will dispatch the default print method for the table, if any of
@@ -20,4 +31,50 @@ the registration config.
 \details{
 Use this in \code{printer_fns} configuration in \code{\link[=register_flips]{register_flips()}}. Do not use
 \code{print()} as that creates an unavoidable S3 dispatch loop.
+
+Since this function stands in for many functions simultaneously, issues with
+argument routing and partial matching can arise when forwarding arguments with \code{...}.
+
+An example would be \code{default_print(x, n = 100)}, targeting 100 rows for class
+\code{tbl}. When the \code{n} arg is forwarded to \link[base:print.dataframe]{base::print.data.frame} instead of \link[pillar:format_tbl]{pillar::print.tbl}
+it ends up getting matched to \code{na.print} due to partial argument matching,
+and thus causes an error.
+
+\code{.args} is provided as a mechanism to work around the argument partial
+matching problem. If configured, it must be a list of \code{\link[=print_arg]{print_arg()}} calls
+which are pairs of argument name alias vectors and a value. For each entry in .args
+the first alias that matches a formal argument in the print function to be
+called is used as the name paried with the corresponding value. If there is
+no match, that value is not passed. This means that partial argument matching
+cannot occur, and that it is possible to account for the same concept being
+represented by different argument names in different print functions.
+}
+\examples{
+\dontrun{
+# This example demonstrates the use of .args. Arguments can still be
+# forwarded to all default print methods using `...` if that would not create
+# problems - there's no harm in trying and seeing that simpler method first.
+register_flips(
+  printer_fns = list(
+    function(x) default_print(x, .args = list(
+      print_arg(c("n", "max"), 1),
+      # Here 'n' is matched ahead of 'max',  so if n matches a formal arg exactly
+      # nothing will be passed for max.
+      print_arg(c("width"), 40)
+    )),
+    function(x) default_print(x, .args = list(
+      print_arg(c("n"), 2),
+      print_arg(c("max"), 20),
+      # Here 'n' and 'max' are matched independently, both, either, or neither
+      # will be passed depending on whether they match a formal arg exactly
+      print_arg(c("width"), 40)
+    ))
+  ),
+  printed_classes = list(
+    print_override(class = "tbl", pkg_namespace = "pillar"),
+    print_override(class = "data.frame", pkg_namespace = "base")
+  )
+)
+}
+
 }
