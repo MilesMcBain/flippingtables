@@ -238,11 +238,12 @@ directly:
 We work around this like so:
 
 ``` r
+library(palmerpenguins)
 library(flippingtables)
 register_flips(
   printer_fns = list(
-    paint::paint, # a pretty good option if I do say so myself.
-    function(x) {
+    paint = paint::paint, # a pretty good option if I do say so myself.
+    kable = function(x) {
       print(knitr::kable(x))
       invisible(x)
     }
@@ -256,7 +257,7 @@ register_flips(
 flip_on() # now it's live!
 flip()
 penguins
-
+# Flipped print method to kable
 # |species   |island    | bill_length_mm| bill_depth_mm| flipper_length_mm| body_mass_g|sex    | year|
 # |:---------|:---------|--------------:|-------------:|-----------------:|-----------:|:------|----:|
 # |Adelie    |Torgersen |           39.1|          18.7|               181|        3750|male   | 2007|

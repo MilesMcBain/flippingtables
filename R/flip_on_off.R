@@ -6,8 +6,11 @@
 #'
 #' @export
 flip_on <- function() {
-	if (is.null(PACKAGE_ENV$registered) || PACKAGE_ENV$registered == FALSE) {
-		rlang::abort("Can't enable flipping tables, call register_flips() with config first.")
+	if (is.null(PACKAGE_ENV$enabled)) {
+    no_config_error()
+	}
+	if (PACKAGE_ENV$enabled) {
+		return(invisible())
 	}
 	lapply(PACKAGE_ENV$printed_classes, function(x) {
 		if (isNamespaceLoaded(x$pkg_namespace)) {
@@ -18,7 +21,8 @@ flip_on <- function() {
 			})
 		}
 	})
-
+  PACKAGE_ENV$enabled <- TRUE
+	on_message()
   invisible()
 
 }
@@ -31,9 +35,13 @@ flip_on <- function() {
 #'
 #' @export
 flip_off <- function() {
-	if (is.null(PACKAGE_ENV$registered) || PACKAGE_ENV$registered == FALSE) {
-		rlang::abort("Can't disable flipping tables, call register_flips() with config first.")
+	if (is.null(PACKAGE_ENV$enabled)) {
+    no_config_error()
 	}
+	if (!PACKAGE_ENV$enabled) {
+		return(invisible())
+	}
+	PACKAGE_ENV$enabled <- FALSE
 	lapply(PACKAGE_ENV$printed_classes, function(x) {
 		if (isNamespaceLoaded(x$pkg_namespace)) {
 			restore_print(x)
@@ -43,7 +51,7 @@ flip_off <- function() {
 			})
 		}
 	})
-
+	off_message()
   invisible()
 }
 
@@ -55,4 +63,20 @@ replace_print <- function(print_override_info) {
 
 restore_print <- function(print_override_info) {
   .S3method("print", print_override_info$class, PACKAGE_ENV$default_prints[[print_override_info$class]])
+}
+
+no_config_error <- function(.frame = parent.frame()) {
+		rlang::abort(
+			"Can't enable flipping tables, call register_flips() with config first.",
+			"no_config_registered",
+			.frame = .frame
+		)
+}
+
+on_message <- function() {
+	rlang::inform(crayon::silver("Ready to flip tables."))
+}
+
+off_message <- function() {
+	rlang::inform(crayon::silver("Flipping tables stopped. Default print methods now in-use."))
 }

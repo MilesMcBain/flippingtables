@@ -9,9 +9,13 @@
 #' The order of `printed_classes` listed as [print_override()] calls is somewhat
 #' important if [default_print()]` is among `printer_fns`. Where an object has
 #' multiple classes from those configured in `printed_classes` the
-#' `default_print()` from the one ' appearing first in `printed_classes` will be
-#' used. The exception to this is ' the class `data.frame` which is always used as
-#' the last resort since most other ' table classes are a specialisation of it.
+#' `default_print()` from the one appearing first in `printed_classes` will be
+#' used. The exception to this is the class `data.frame` which is always used as
+#' the last resort since most other table classes are a specialisation of it.
+#'
+#' The list of `printer_fns` may contan named items. If the print method has a
+#' name, a message will be printed containing the name when the method if
+#' flipped to.
 #'
 #' @examples
 #' \dontrun{
@@ -78,7 +82,7 @@ register_flips <- function(printer_fns, printed_classes) {
 	PACKAGE_ENV$default_prints <- list()
 
 
-	PACKAGE_ENV$registered <- TRUE
+	PACKAGE_ENV$enabled <- FALSE
 
 	TRUE
 }

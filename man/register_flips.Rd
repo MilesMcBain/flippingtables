@@ -22,8 +22,12 @@ classes.
 \section{Details}{
 
 The order of \code{printed_classes} listed as \code{\link[=print_override]{print_override()}} calls is somewhat
-important if \code{\link[=default_print]{default_print()}}\verb{is among}printer_fns\verb{. Where an object has multiple classes from those configured in }printed_classes\code{the}default_print()\verb{from the one ' appearing first in}printed_classes\verb{will be used. The exception to this is ' the class}data.frame` which is always used as
-the last resort since most other ' table classes are a specialisation of it.
+important if \code{\link[=default_print]{default_print()}}\verb{is among}printer_fns\verb{. Where an object has multiple classes from those configured in }printed_classes\code{the}default_print()\verb{from the one appearing first in}printed_classes\verb{will be used. The exception to this is the class}data.frame` which is always used as
+the last resort since most other table classes are a specialisation of it.
+
+The list of \code{printer_fns} may contan named items. If the print method has a
+name, a message will be printed containing the name when the method if
+flipped to.
 }
 
 \examples{
