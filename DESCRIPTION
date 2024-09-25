@@ -15,6 +15,7 @@ Imports:
     rlang,
     stats,
     utils,
+    withr,
     paint
 Remotes:
     MilesMcBain/paint
