@@ -14,7 +14,8 @@ Imports:
     magrittr,
     rlang,
     stats,
-    utils
+    utils,
+    paint
 Remotes:
     MilesMcBain/paint
 Suggests:
