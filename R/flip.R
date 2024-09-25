@@ -32,7 +32,7 @@ flip <- function(last_value = .Last.value) {
   if (!is.null(method_name) && nzchar(method_name)) {
     flip_message(method_name)
   }
-  if (length(intersecting_classes) > 1) {
+  if (length(intersecting_classes) >= 1) {
     last_value
   } else {
     invisible(last_value)
