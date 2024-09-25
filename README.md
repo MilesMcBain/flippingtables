@@ -6,12 +6,13 @@
 > All data.frame print methods are wrong, but some are useful
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 Inside you are two R users:
 
--   One seeks meaning and truth in the numbers
--   One seeks correctness and reproducibility in the code
+- One seeks meaning and truth in the numbers
+- One seeks correctness and reproducibility in the code
 
 The problem with all `print()` methods is that none can satisfy both
 users.
@@ -41,6 +42,10 @@ your data in your session fully within your control.
 
 ``` r
 remotes::install_github("MilesMcBain/flippingtables")
+
+# and to try out the example configuration below:
+install.packages("withr")
+remotes::install_github("MilesMcBain/paint")
 ```
 
 ## How to flip() tables
@@ -52,14 +57,13 @@ The setup is:
 
 2.  Enable the config with `flip_on()` (possibly in .Rprofile)
 
--   may seem redundant but thank me when you need to `flip_off()` custom
-    print methods because they balk at exotic text encodings or some
-    such.
+- may seem redundant but thank me when you need to `flip_off()` custom
+  print methods because they balk at exotic text encodings or some such.
 
 3.  Use `flip()` to cycle between configured print methods for
     configured classes.
 
--   Probably via a keyboard shortcut
+- Probably via a keyboard shortcut
 
 ## Configuration
 
@@ -80,7 +84,11 @@ register_flips(
   )
 )
 #> [1] TRUE
+```
+
+``` r
 flip_on() # now it's live!
+#> Ready to flip tables.
 ```
 
 First in `printer_fns` we declare the print methods we want be able to
@@ -210,15 +218,15 @@ In VSCode:
 
 In RStudio:
 
--   `flip()` is exposed as an RStudio addin, which can be bound to a
-    keyboard shortcut. See
-    [instructions](https://docs.posit.co/ide/user/ide/guide/productivity/custom-shortcuts.html)
+- `flip()` is exposed as an RStudio addin, which can be bound to a
+  keyboard shortcut. See
+  [instructions](https://docs.posit.co/ide/user/ide/guide/productivity/custom-shortcuts.html)
 
 In other editor:
 
--   I think you should mostly be fine since it doesn’t depend on any
-    editor state, but let me know if I can expose anything that makes it
-    easier.
+- I think you should mostly be fine since it doesn’t depend on any
+  editor state, but let me know if I can expose anything that makes it
+  easier.
 
 ### Cookbook
 
@@ -228,12 +236,12 @@ benefit that you can easily copy-paste the output to make nice tables in
 applications that speak markdown. It presents two problems for use
 directly:
 
--   it doesn’t return the data it printed invisibly, unlike most methods
-    intended to be used for this purpose. This will cause printing the
-    `.Last.value` with flip() to stop as soon as this method is hit.
--   it returns an object of a different class which has its own print
-    method. R console seems not to like the idea of running through the
-    print dispatch again, so we get nothing.
+- it doesn’t return the data it printed invisibly, unlike most methods
+  intended to be used for this purpose. This will cause printing the
+  `.Last.value` with flip() to stop as soon as this method is hit.
+- it returns an object of a different class which has its own print
+  method. R console seems not to like the idea of running through the
+  print dispatch again, so we get nothing.
 
 We work around this like so:
 

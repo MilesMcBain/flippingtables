@@ -50,6 +50,10 @@ within your control.
 
 ``` r
 remotes::install_github("MilesMcBain/flippingtables")
+
+# and to try out the example configuration below:
+install.packages("withr")
+remotes::install_github("MilesMcBain/paint")
 ```
 
 ## How to flip() tables

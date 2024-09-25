@@ -1,6 +1,6 @@
 Package: flippingtables
 Title: Override and cycle between table print methods
-Version: 0.0.4
+Version: 0.0.5
 Authors@R:
     person("Miles", "McBain", , "miles.mcbain@gmail.com", role = c("aut", "cre"))
 Description: User can configure a list of alternative print methods and table classes to which they apply. Facilitates cycling between print methods with a keyboard shortcut.
@@ -18,5 +18,9 @@ Imports:
 Suggests:
     palmerpenguins,
     pillar,
+    paint,
+    withr,
     testthat (>= 3.0.0)
+Remotes:
+    MilesMcBain/paint
 Config/testthat/edition: 3
